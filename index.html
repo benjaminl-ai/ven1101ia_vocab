@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 IA Practice Tool</title>
+    <title>VEN1101 IA Practice</title>
     <style>
         :root {
             --ios-bg: #f2f2f7;
             --ios-card: #ffffff;
-            --ios-blue: #007aff;
+            --ios-system-green: #34c759; /* 改為綠色 */
             --ios-gray: #8e8e93;
             --ios-separator: #c6c6c8;
             --ios-text: #000000;
             --ios-secondary-text: #3c3c43;
-            --ios-green: #34c759;
             --ios-red: #ff3b30;
-            --ios-orange: #ff9500;
         }
 
         body {
@@ -27,7 +25,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* iOS Header */
         header {
             padding: 30px 16px 10px 16px;
             background-color: var(--ios-bg);
@@ -40,14 +37,7 @@
             letter-spacing: -0.5px;
         }
 
-        header h2 {
-            font-size: 22px;
-            font-weight: 600;
-            margin: 10px 0 0 0;
-            color: var(--ios-secondary-text);
-        }
-
-        /* iOS Tabs (Segmented Control) */
+        /* iOS Segmented Control */
         .tabs-container {
             padding: 10px 16px;
             position: sticky;
@@ -81,7 +71,6 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.12);
         }
 
-        /* iOS List Style */
         .section-label {
             padding: 20px 16px 8px 16px;
             font-size: 13px;
@@ -97,6 +86,7 @@
             overflow: hidden;
         }
 
+        /* 英文靠左, 中文靠右 */
         .item-row {
             display: flex;
             justify-content: space-between;
@@ -104,29 +94,14 @@
             padding: 12px 16px;
             cursor: pointer;
             border-bottom: 0.5px solid var(--ios-separator);
-            transition: background-color 0.1s;
         }
 
-        .item-row:last-child {
-            border-bottom: none;
-        }
+        .item-row:last-child { border-bottom: none; }
+        .item-row:active { background-color: #e5e5ea; }
 
-        .item-row:active {
-            background-color: #e5e5ea;
-        }
+        .eng-txt { font-size: 17px; color: var(--ios-text); text-align: left; flex: 1; }
+        .chi-txt { font-size: 15px; color: var(--ios-gray); text-align: right; }
 
-        .eng-txt {
-            font-size: 17px;
-            color: var(--ios-text);
-            font-weight: 400;
-        }
-
-        .chi-txt {
-            font-size: 15px;
-            color: var(--ios-gray);
-        }
-
-        /* Chevron Icon */
         .item-row::after {
             content: "〉";
             font-size: 14px;
@@ -134,14 +109,10 @@
             margin-left: 10px;
         }
 
-        /* Challenge Button */
-        .challenge-box {
-            padding: 40px 16px;
-            text-align: center;
-        }
-
-        .ios-btn-blue {
-            background-color: var(--ios-blue);
+        /* Challenge */
+        .challenge-box { padding: 40px 16px; text-align: center; }
+        .ios-btn-green {
+            background-color: var(--ios-system-green);
             color: white;
             border: none;
             padding: 16px 32px;
@@ -151,10 +122,16 @@
             width: 100%;
             cursor: pointer;
         }
+        .ios-btn-green:active { opacity: 0.8; }
 
-        .ios-btn-blue:active { opacity: 0.8; }
+        .encourage-text {
+            color: var(--ios-gray);
+            font-size: 15px;
+            margin-top: 25px;
+            line-height: 1.5;
+        }
 
-        /* Practice Sheet (iOS Modal Style) */
+        /* Practice Sheet */
         .practice-panel {
             position: fixed;
             bottom: 0;
@@ -162,39 +139,43 @@
             right: 0;
             background-color: var(--ios-card);
             border-radius: 20px 20px 0 0;
-            padding: 20px 16px 40px 16px;
+            padding: 10px 16px 40px 16px;
             box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
             display: none;
             z-index: 1000;
             text-align: center;
         }
 
+        /* 頂部橫線作為關閉按鈕 */
+        .grabber-area {
+            padding: 10px 0 20px 0;
+            cursor: pointer;
+        }
         .grabber {
             width: 36px;
             height: 5px;
             background-color: #d1d1d6;
             border-radius: 3px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto;
         }
 
-        .target-display { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: var(--ios-blue); }
+        .target-display { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--ios-system-green); padding: 0 10px; }
         .target-translation { font-size: 16px; color: var(--ios-gray); margin-bottom: 25px; }
 
-        .btn-stack { display: flex; flex-direction: column; gap: 12px; }
-        
+        /* Button 平排 */
+        .btn-row { display: flex; gap: 12px; }
         .action-btn {
+            flex: 1;
             padding: 14px;
             border-radius: 12px;
             border: none;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
         }
-
-        .btn-record { background-color: var(--ios-blue); color: white; }
+        .btn-record { background-color: var(--ios-system-green); color: white; }
         .btn-record.recording { background-color: var(--ios-red); animation: pulse 1s infinite; }
-        .btn-listen { background-color: #f2f2f7; color: var(--ios-blue); }
-        .btn-close { background-color: transparent; color: var(--ios-blue); margin-top: 10px; }
+        .btn-listen { background-color: #f2f2f7; color: var(--ios-system-green); }
 
         .feedback { margin: 15px 0; font-size: 15px; font-weight: 600; min-height: 1.2em; }
         
@@ -205,7 +186,7 @@
 <body>
 
 <header>
-    <h1>VEN1101 IA Practice Tool</h1>
+    <h1>VEN1101 IA Practice</h1>
 </header>
 
 <div class="tabs-container">
@@ -217,57 +198,42 @@
 </div>
 
 <div id="vocab-section">
-    <div class="section-label">Month</div>
-    <div id="list-month" class="ios-group"></div>
-    
-    <div class="section-label">Duty / Training</div>
-    <div id="list-duty" class="ios-group"></div>
-    
-    <div class="section-label">Action Verb</div>
-    <div id="list-verb" class="ios-group"></div>
-    
-    <div class="section-label">Noun</div>
-    <div id="list-noun" class="ios-group"></div>
+    <div class="section-label">Month</div><div id="list-month" class="ios-group"></div>
+    <div class="section-label">Duty / Training</div><div id="list-duty" class="ios-group"></div>
+    <div class="section-label">Action Verb</div><div id="list-verb" class="ios-group"></div>
+    <div class="section-label">Noun</div><div id="list-noun" class="ios-group"></div>
 </div>
 
 <div id="exp-section" class="hidden">
-    <div class="section-label">Greeting</div>
-    <div id="exp-1" class="ios-group"></div>
-    
-    <div class="section-label">Asking for information</div>
-    <div id="exp-2" class="ios-group"></div>
-    
-    <div class="section-label">Making requests</div>
-    <div id="exp-3" class="ios-group"></div>
-    
-    <div class="section-label">Responding to requests</div>
-    <div id="exp-4" class="ios-group"></div>
-    
-    <div class="section-label">Closing</div>
-    <div id="exp-5" class="ios-group"></div>
-    
-    <div class="section-label">Asking for clarification</div>
-    <div id="exp-6" class="ios-group"></div>
+    <div class="section-label">Asking for information</div><div id="exp-2" class="ios-group"></div>
+    <div class="section-label">Making requests</div><div id="exp-3" class="ios-group"></div>
+    <div class="section-label">Responding to requests</div><div id="exp-4" class="ios-group"></div>
 </div>
 
 <div id="challenge-section" class="hidden">
     <div class="challenge-box">
-        <button class="ios-btn-blue" onclick="getRandomChallenge()">Generate Random Challenge</button>
-        <p style="color:var(--ios-gray); font-size:14px; margin-top:20px;">結合 Vocab 與 Expressions 的實戰練習</p>
+        <button class="ios-btn-green" onclick="getRandomChallenge()">Start Quest</button>
+        <div class="encourage-text">
+            Don't be afraid to speak up! Every practice makes you better.<br>
+            <b>不要害怕嘗試！每一次練習都能讓你變得更優秀。</b>
+        </div>
     </div>
 </div>
 
 <div id="practice-panel" class="practice-panel">
-    <div class="grabber"></div>
-    <div id="target-display" class="target-display">Text</div>
+    <div class="grabber-area" onclick="closePanel()">
+        <div class="grabber"></div>
+        <div style="font-size: 11px; color: #aeaeb2; margin-top: 5px;">Tap to close</div>
+    </div>
+    
+    <div id="target-display" class="target-display">Target Text</div>
     <div id="target-translation" class="target-translation">Translation</div>
     
     <div id="feedback-text" class="feedback"></div>
     
-    <div class="btn-stack">
-        <button id="record-btn" class="action-btn btn-record" onclick="startRecognition()">🎤 Record Answer</button>
-        <button class="action-btn btn-listen" onclick="speakText()">🔊 Listen to Model</button>
-        <button class="action-btn btn-close" onclick="closePanel()">Done</button>
+    <div class="btn-row">
+        <button id="record-btn" class="action-btn btn-record" onclick="startRecognition()">🎤 Record</button>
+        <button class="action-btn btn-listen" onclick="speakText()">🔊 Listen</button>
     </div>
 </div>
 
@@ -280,12 +246,9 @@
     };
 
     const expData = {
-        1: [{en: "Hello. May I help you?", zh: "你好。有什麼我可以幫你嗎？"}, {en: "Hi. Do you need help?", zh: "你好。你需要幫忙嗎？"}],
         2: [{en: "Can you tell me the date of the ...?", zh: "你能告訴我...的日期嗎？"}, {en: "May I know the location of the ...?", zh: "我可以知道...的地點嗎？"}],
         3: [{en: "Could you please ...?", zh: "能否請你...？"}, {en: "Can you please ...?", zh: "可以請你...嗎？"}, {en: "Would you please ...?", zh: "你願意...嗎？"}],
-        4: [{en: "Yes. Sure. I'll...", zh: "好的。沒問題。我會..."}, {en: "Of course. I will...", zh: "當然。我會..."}, {en: "OK. I will ...", zh: "好。我會..."}],
-        5: [{en: "You're welcome. Goodbye", zh: "不客氣。再見。"}],
-        6: [{en: "Sorry. I missed that. Could you repeat that, please?", zh: "抱歉。我聽不清楚。可以請你重複一遍嗎？"}, {en: "May I beg your pardon?", zh: "請再說一遍好嗎？"}, {en: "Sorry. Can you say it again, please?", zh: "抱歉。可以請你再說一次嗎？"}]
+        4: [{en: "Yes. Sure. I'll...", zh: "好的。沒問題。我會..."}, {en: "Of course. I will...", zh: "當然。我會..."}, {en: "OK. I will ...", zh: "好。我會..."}]
     };
 
     const challenges = [
@@ -352,11 +315,11 @@
                     <span class="eng-txt">${item.en}</span><span class="chi-txt">${item.zh}</span></div>`;
             });
         }
-        for (let i = 1; i <= 6; i++) {
+        for (const i in expData) {
             const container = document.getElementById(`exp-${i}`);
             expData[i].forEach(item => {
                 container.innerHTML += `<div class="item-row" onclick="openPractice('${item.en}', '${item.zh}')">
-                    <span class="eng-txt" style="font-size:16px;">${item.en}</span><span class="chi-txt" style="font-size:14px;">${item.zh}</span></div>`;
+                    <span class="eng-txt">${item.en}</span><span class="chi-txt">${item.zh}</span></div>`;
             });
         }
     }
@@ -399,7 +362,7 @@
 
     function startRecognition() {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!SR) return alert("Your browser does not support Speech Recognition.");
+        if(!SR) return alert("System not supported.");
         recognition = new SR();
         recognition.lang = 'en-US';
         
@@ -408,35 +371,25 @@
         
         recognition.onstart = () => { 
             btn.classList.add('recording'); 
-            btn.innerText = "Listening...";
+            btn.innerText = "Recording...";
             feedback.innerText = "Listening..."; 
         };
         
         recognition.onresult = (e) => {
-            recognition.stop(); // 錄完音後主動熄 Mic Access
+            recognition.stop(); 
             const result = e.results[0][0].transcript.toLowerCase().trim().replace(/[.?]/g,"");
             const target = currentTarget.toLowerCase().trim().replace(/[.?]/g,"");
-            
             if(result === target) {
-                feedback.style.color = "var(--ios-green)";
-                feedback.innerText = "Excellent! Perfect pronunciation.";
+                feedback.style.color = "var(--ios-system-green)";
+                feedback.innerText = "Excellent! Correct.";
             } else {
                 feedback.style.color = "var(--ios-red)";
                 feedback.innerHTML = `You said: <span style="color:black;">"${e.results[0][0].transcript}"</span>`;
             }
         };
 
-        recognition.onend = () => { 
-            btn.classList.remove('recording'); 
-            btn.innerText = "🎤 Record Answer";
-        };
-        
-        recognition.onerror = () => { 
-            recognition.stop(); 
-            btn.classList.remove('recording'); 
-            btn.innerText = "🎤 Record Answer";
-        };
-        
+        recognition.onend = () => { btn.classList.remove('recording'); btn.innerText = "🎤 Record"; };
+        recognition.onerror = () => { recognition.stop(); btn.classList.remove('recording'); btn.innerText = "🎤 Record"; };
         recognition.start();
     }
 
