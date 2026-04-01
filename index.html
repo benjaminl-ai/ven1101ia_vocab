@@ -12,6 +12,7 @@
             --card: #ffffff;
             --text: #1e293b;
             --accent: #6366f1;
+            --danger: #ef4444;
         }
 
         body {
@@ -25,7 +26,7 @@
             align-items: center;
         }
 
-        .container { width: 100%; max-width: 800px; padding-bottom: 150px; }
+        .container { width: 100%; max-width: 800px; padding-bottom: 180px; }
 
         header { text-align: center; margin: 20px 0; }
 
@@ -52,7 +53,6 @@
 
         .tab-btn.active { background: var(--primary); color: white; }
 
-        /* List Styling */
         .category-hd { 
             background: var(--accent); 
             color: white; 
@@ -73,9 +73,7 @@
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             cursor: pointer;
-            transition: 0.2s;
         }
-        .item-row:active { background: #e2e8f0; }
         
         .eng-txt { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
         .chi-txt { color: #64748b; font-size: 1rem; }
@@ -95,26 +93,39 @@
         }
 
         .panel-content { max-width: 600px; margin: 0 auto; text-align: center; }
-        .target-display { font-size: 1.6rem; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
-        .target-translation { font-size: 1rem; color: #64748b; margin-bottom: 20px; }
+        .target-display { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+        .target-translation { font-size: 1rem; color: #64748b; margin-bottom: 15px; }
 
-        .btn-group { display: flex; justify-content: center; gap: 15px; }
+        .btn-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        
+        .controls-row { display: flex; justify-content: center; gap: 15px; width: 100%; }
+
         .action-btn {
-            padding: 15px 30px;
+            padding: 15px 25px;
             border-radius: 50px;
             border: none;
             font-weight: 600;
             cursor: pointer;
             display: flex; align-items: center; gap: 8px;
             font-size: 1rem;
+            transition: all 0.3s;
         }
         .btn-listen { background: #dbeafe; color: var(--primary); }
-        .btn-record { background: var(--primary); color: white; }
-        .btn-record.recording { background: #ef4444; animation: pulse 1.5s infinite; }
+        .btn-record { background: var(--primary); color: white; min-width: 200px; justify-content: center; }
+        
+        /* Recording State */
+        .btn-record.recording { 
+            background: var(--danger); 
+            animation: pulse 1.2s infinite; 
+        }
 
         .feedback { margin-top: 15px; font-size: 1rem; min-height: 1.5em; font-weight: bold; }
         
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        @keyframes pulse { 
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
         .hidden { display: none; }
     </style>
 </head>
@@ -133,13 +144,10 @@
     <div id="vocab-section">
         <div class="category-hd">Month</div>
         <div id="list-month" class="item-list"></div>
-        
         <div class="category-hd">Duty / Training</div>
         <div id="list-duty" class="item-list"></div>
-
         <div class="category-hd">Action Verb</div>
         <div id="list-verb" class="item-list"></div>
-
         <div class="category-hd">Noun</div>
         <div id="list-noun" class="item-list"></div>
     </div>
@@ -151,46 +159,27 @@
     <div class="panel-content">
         <div id="target-display" class="target-display">Text</div>
         <div id="target-translation" class="target-translation">中文翻譯</div>
+        
         <div id="feedback-text" class="feedback"></div>
+
         <div class="btn-group">
-            <button class="action-btn btn-listen" onclick="speakText()">🔊 Listen</button>
-            <button id="record-btn" class="action-btn btn-record" onclick="toggleRecord()">🎤 Record</button>
-            <button class="action-btn" style="background:#eee" onclick="closePanel()">✕</button>
+            <div class="controls-row">
+                <button class="action-btn btn-listen" onclick="speakText()">🔊 Listen</button>
+                <button id="record-btn" class="action-btn btn-record" onclick="toggleRecord()">
+                    <span id="mic-icon">🎤</span> <span id="record-text">Record</span>
+                </button>
+            </div>
+            <button class="action-btn" style="background:#eee; width: 100px; justify-content: center;" onclick="closePanel()">Close</button>
         </div>
     </div>
 </div>
 
 <script>
     const vocabData = {
-        month: [
-            {en: "January", zh: "一月"}, {en: "February", zh: "二月"}, {en: "March", zh: "三月"},
-            {en: "April", zh: "四月"}, {en: "May", zh: "五月"}, {en: "June", zh: "六月"}
-        ],
-        duty: [
-            {en: "Dinner meeting", zh: "晚餐會議"}, {en: "English speaking course", zh: "英語會話課程"},
-            {en: "Fashion show", zh: "時裝表演"}, {en: "Food expo", zh: "食品博覽會"},
-            {en: "Food test", zh: "食品檢測"}, {en: "IT course", zh: "資訊科技課程"},
-            {en: "Music show", zh: "音樂表演"}, {en: "New products training", zh: "新產品培訓"},
-            {en: "New services training", zh: "新服務培訓"}, {en: "Safety workshop", zh: "安全工作坊"},
-            {en: "Sales training", zh: "銷售培訓"}, {en: "Staff meeting", zh: "員工會議"},
-            {en: "Trade talk", zh: "貿易講座"}, {en: "Yoga workshop", zh: "瑜伽工作坊"}
-        ],
-        verb: [
-            {en: "ask", zh: "詢問"}, {en: "book", zh: "預訂"}, {en: "bring", zh: "帶"},
-            {en: "check", zh: "檢查"}, {en: "confirm", zh: "確認"}, {en: "copy", zh: "影印"},
-            {en: "design", zh: "設計"}, {en: "download", zh: "下載"}, {en: "email", zh: "發送電郵"},
-            {en: "get", zh: "取得"}, {en: "meet", zh: "約見"}, {en: "order", zh: "訂購"},
-            {en: "prepare", zh: "準備"}, {en: "print", zh: "列印"}, {en: "send", zh: "傳送"},
-            {en: "set up", zh: "建立"}, {en: "tell", zh: "告訴"}, {en: "write", zh: "寫"}
-        ],
-        noun: [
-            {en: "booth", zh: "攤位"}, {en: "café", zh: "咖啡店"}, {en: "checklist", zh: "檢查清單"},
-            {en: "drinks", zh: "飲品"}, {en: "equipment", zh: "設備"}, {en: "floor plan", zh: "平面圖"},
-            {en: "handout", zh: "講義"}, {en: "key", zh: "鎖匙"}, {en: "list", zh: "清單"},
-            {en: "menu", zh: "選單"}, {en: "people", zh: "人們"}, {en: "poster", zh: "海報"},
-            {en: "room", zh: "房間"}, {en: "rundown", zh: "流程表"}, {en: "samples", zh: "樣本"},
-            {en: "table", zh: "檯"}, {en: "tomorrow", zh: "明天"}, {en: "tools", zh: "工具"}
-        ]
+        month: [{en: "January", zh: "一月"}, {en: "February", zh: "二月"}, {en: "March", zh: "三月"}, {en: "April", zh: "四月"}, {en: "May", zh: "五月"}, {en: "June", zh: "六月"}],
+        duty: [{en: "Dinner meeting", zh: "晚餐會議"}, {en: "English speaking course", zh: "英語會話課程"}, {en: "Fashion show", zh: "時裝表演"}, {en: "Food expo", zh: "食品博覽會"}, {en: "Food test", zh: "食品檢測"}, {en: "IT course", zh: "資訊科技課程"}, {en: "Music show", zh: "音樂表演"}, {en: "New products training", zh: "新產品培訓"}, {en: "New services training", zh: "新服務培訓"}, {en: "Safety workshop", zh: "安全工作坊"}, {en: "Sales training", zh: "銷售培訓"}, {en: "Staff meeting", zh: "員工會議"}, {en: "Trade talk", zh: "貿易講座"}, {en: "Yoga workshop", zh: "瑜伽工作坊"}],
+        verb: [{en: "ask", zh: "詢問"}, {en: "book", zh: "預訂"}, {en: "bring", zh: "帶"}, {en: "check", zh: "檢查"}, {en: "confirm", zh: "確認"}, {en: "copy", zh: "影印"}, {en: "design", zh: "設計"}, {en: "download", zh: "下載"}, {en: "email", zh: "發送電郵"}, {en: "get", zh: "取得"}, {en: "meet", zh: "約見"}, {en: "order", zh: "訂購"}, {en: "prepare", zh: "準備"}, {en: "print", zh: "列印"}, {en: "send", zh: "傳送"}, {en: "set up", zh: "建立"}, {en: "tell", zh: "告訴"}, {en: "write", zh: "寫"}],
+        noun: [{en: "booth", zh: "攤位"}, {en: "café", zh: "咖啡店"}, {en: "checklist", zh: "檢查清單"}, {en: "drinks", zh: "飲品"}, {en: "equipment", zh: "設備"}, {en: "floor plan", zh: "平面圖"}, {en: "handout", zh: "講義"}, {en: "key", zh: "鎖匙"}, {en: "list", zh: "清單"}, {en: "menu", zh: "選單"}, {en: "people", zh: "人們"}, {en: "poster", zh: "海報"}, {en: "room", zh: "房間"}, {en: "rundown", zh: "流程表"}, {en: "samples", zh: "樣本"}, {en: "table", zh: "檯"}, {en: "tomorrow", zh: "明天"}, {en: "tools", zh: "工具"}]
     };
 
     const expData = [
@@ -207,6 +196,7 @@
     let currentTarget = "";
     let recognition;
     let isRecording = false;
+    let lastTranscript = "";
 
     function render() {
         for (const cat in vocabData) {
@@ -219,18 +209,16 @@
                     </div>`;
             });
         }
-
         const expSec = document.getElementById('exp-section');
         expData.forEach(item => {
-            expSec.innerHTML += `
-                <div class="item-row" onclick="openPractice('${item.en}', '${item.zh}')">
-                    <div style="display:flex; flex-direction:column;">
-                        <span style="font-size:0.7rem; color:var(--accent); font-weight:bold;">${item.c}</span>
-                        <span class="eng-txt" style="font-size:1rem;">${item.en}</span>
-                        <span class="chi-txt" style="font-size:0.9rem;">${item.zh}</span>
-                    </div>
-                    <span>▶</span>
-                </div>`;
+            expSec.innerHTML += `<div class="item-row" onclick="openPractice('${item.en}', '${item.zh}')">
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size:0.7rem; color:var(--accent); font-weight:bold;">${item.c}</span>
+                    <span class="eng-txt" style="font-size:1rem;">${item.en}</span>
+                    <span class="chi-txt" style="font-size:0.9rem;">${item.zh}</span>
+                </div>
+                <span>▶</span>
+            </div>`;
         });
     }
 
@@ -248,9 +236,13 @@
         document.getElementById('target-translation').innerText = zh;
         document.getElementById('practice-panel').style.display = 'block';
         document.getElementById('feedback-text').innerText = "";
+        resetRecordUI();
     }
 
-    function closePanel() { document.getElementById('practice-panel').style.display = 'none'; }
+    function closePanel() { 
+        if(isRecording) stopRecording();
+        document.getElementById('practice-panel').style.display = 'none'; 
+    }
 
     function speakText() {
         window.speechSynthesis.cancel();
@@ -261,33 +253,67 @@
 
     function initSpeech() {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SR) return;
+        if (!SR) { alert("Speech Recognition not supported in this browser."); return; }
         recognition = new SR();
         recognition.lang = 'en-US';
+        recognition.continuous = true; // 關鍵：不自動關閉
+        recognition.interimResults = false;
+
         recognition.onresult = (e) => {
-            const result = e.results[0][0].transcript.toLowerCase().trim().replace(/[.?]/g,"");
-            const target = currentTarget.toLowerCase().trim().replace(/[.?]/g,"");
-            const feedback = document.getElementById('feedback-text');
-            if(result === target) {
-                feedback.style.color = "var(--success)";
-                feedback.innerText = "Excellent! Correct pronunciation.";
-            } else {
-                feedback.style.color = "#ef4444";
-                feedback.innerText = `You said: "${result}"`;
-            }
-        };
-        recognition.onend = () => {
-            isRecording = false;
-            document.getElementById('record-btn').classList.remove('recording');
+            lastTranscript = e.results[e.results.length - 1][0].transcript;
         };
     }
 
     function toggleRecord() {
-        if(isRecording) { recognition.stop(); } 
-        else {
-            isRecording = true;
-            document.getElementById('record-btn').classList.add('recording');
-            recognition.start();
+        if(isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    }
+
+    function startRecording() {
+        lastTranscript = "";
+        isRecording = true;
+        const btn = document.getElementById('record-btn');
+        btn.classList.add('recording');
+        document.getElementById('record-text').innerText = "Click to stop recording...";
+        document.getElementById('mic-icon').innerText = "⏹";
+        document.getElementById('feedback-text').innerText = "Listening...";
+        recognition.start();
+    }
+
+    function stopRecording() {
+        isRecording = false;
+        recognition.stop();
+        resetRecordUI();
+        processFeedback();
+    }
+
+    function resetRecordUI() {
+        const btn = document.getElementById('record-btn');
+        btn.classList.remove('recording');
+        document.getElementById('record-text').innerText = "Record";
+        document.getElementById('mic-icon').innerText = "🎤";
+    }
+
+    function processFeedback() {
+        const feedback = document.getElementById('feedback-text');
+        if(!lastTranscript) {
+            feedback.style.color = "orange";
+            feedback.innerText = "No voice detected. Try again.";
+            return;
+        }
+
+        const result = lastTranscript.toLowerCase().trim().replace(/[.?]/g,"");
+        const target = currentTarget.toLowerCase().trim().replace(/[.?]/g,"");
+        
+        if(result === target) {
+            feedback.style.color = "var(--success)";
+            feedback.innerText = "Excellent! Perfect.";
+        } else {
+            feedback.style.color = "var(--danger)";
+            feedback.innerHTML = `You said: "<i style="color:#333">${lastTranscript}</i>"`;
         }
     }
 
