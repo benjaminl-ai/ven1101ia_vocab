@@ -3,142 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEN1101 IA Practice Tool</title>
+    <title>VEN1101 IA System v2.0 - FULL VERSION</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --success: #059669;
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --text: #1e293b;
-            --accent: #6366f1;
-            --danger: #ef4444;
-            --challenge: #f59e0b;
+            --bg-dark: #0f172a;
+            --panel-dark: #1e293b;
+            --neon-blue: #38bdf8;
+            --neon-purple: #a855f7;
+            --neon-green: #22c55e;
+            --neon-red: #ef4444;
+            --neon-gold: #f59e0b;
+            --text-main: #f8fafc;
         }
 
         body {
-            font-family: -apple-system, "Microsoft JhengHei", sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
             padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            background-image: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 100%);
+            min-height: 100vh;
         }
 
-        .container { width: 100%; max-width: 800px; padding-bottom: 150px; }
-        header { text-align: center; margin: 15px 0; }
+        .container { width: 100%; max-width: 800px; padding-bottom: 160px; }
+
+        header h1 { 
+            text-align: center; 
+            font-size: 1.1rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin: 15px 0;
+        }
 
         .tabs {
-            display: flex; gap: 8px; position: sticky; top: 0;
-            background: var(--bg); padding: 10px 0; z-index: 100;
+            display: flex; gap: 5px; position: sticky; top: 0;
+            background: rgba(15, 23, 42, 0.9); padding: 10px 0; z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .tab-btn {
-            flex: 1; padding: 12px 5px; border: none; background: #e2e8f0;
-            border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem;
+            flex: 1; padding: 10px 5px; border: 1px solid var(--neon-blue); 
+            background: transparent; color: var(--neon-blue);
+            border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem;
+            transition: all 0.3s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
         }
 
-        .tab-btn.active { background: var(--primary); color: white; }
-        .tab-btn.challenge-active { background: var(--challenge); color: white; }
+        .tab-btn.active { 
+            background: var(--neon-blue); color: var(--bg-dark); 
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .tab-btn#btn-challenge { border-color: var(--neon-gold); color: var(--neon-gold); }
+        .tab-btn.challenge-active { 
+            background: var(--neon-gold); color: var(--bg-dark); 
+            box-shadow: 0 0 15px var(--neon-gold);
+        }
 
         .category-hd { 
-            background: var(--accent); color: white; padding: 6px 12px; 
-            border-radius: 6px; margin: 20px 0 10px 0; font-size: 0.85rem;
+            border-left: 4px solid var(--neon-purple);
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.2), transparent);
+            color: var(--neon-purple); padding: 5px 12px; 
+            margin: 20px 0 10px 0; font-size: 0.8rem; font-weight: bold;
+            text-transform: uppercase;
         }
 
-        .item-list { display: grid; gap: 8px; }
+        .item-list { display: grid; gap: 10px; }
         .item-row {
-            background: var(--card); padding: 15px; border-radius: 10px;
+            background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 12px 18px; border-radius: 4px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer;
+            cursor: pointer; transition: 0.2s;
+        }
+        .item-row:hover { 
+            background: rgba(56, 189, 248, 0.1); 
+            border-color: var(--neon-blue);
+            transform: translateX(5px);
         }
         
-        .eng-txt { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
-        .chi-txt { color: #64748b; font-size: 0.95rem; }
+        .eng-txt { font-weight: bold; color: var(--neon-blue); font-size: 1rem; }
+        .chi-txt { color: #94a3b8; font-size: 0.85rem; }
 
         .challenge-container {
-            text-align: center; padding: 40px 20px; background: white;
-            border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-top: 20px; border: 2px dashed var(--challenge);
+            text-align: center; padding: 50px 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px solid var(--neon-gold); border-radius: 8px;
+            margin-top: 20px;
         }
         .challenge-btn {
-            background: var(--challenge); color: white; border: none;
-            padding: 15px 30px; border-radius: 50px; font-weight: bold;
-            font-size: 1.1rem; cursor: pointer; margin-bottom: 20px;
+            background: var(--neon-gold); color: var(--bg-dark); border: none;
+            padding: 15px 40px; font-weight: 900; font-size: 1.1rem;
+            cursor: pointer; clip-path: polygon(0 20%, 10% 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+            box-shadow: 0 5px 0 #b45309; transition: 0.1s;
         }
+        .challenge-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #b45309; }
 
         .practice-panel {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; padding: 25px 20px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
-            display: none; border-radius: 24px 24px 0 0; z-index: 1000;
+            background: #1e293b; border-top: 3px solid var(--neon-blue);
+            padding: 20px; display: none; z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
 
         .panel-content { max-width: 600px; margin: 0 auto; text-align: center; }
-        .target-display { font-size: 1.4rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
-        .target-translation { font-size: 0.95rem; color: #64748b; margin-bottom: 15px; }
+        .target-display { font-size: 1.2rem; font-weight: bold; color: var(--neon-blue); margin-bottom: 5px; }
+        .target-translation { font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px; font-style: italic; }
 
-        .btn-group { display: flex; justify-content: center; gap: 15px; }
+        .btn-group { display: flex; justify-content: center; gap: 10px; }
         .action-btn {
-            padding: 15px 25px; border-radius: 50px; border: none;
-            font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            padding: 12px 20px; border-radius: 4px; border: 1px solid #475569;
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            background: #334155; color: white; text-transform: uppercase; font-size: 0.75rem;
         }
-        .btn-listen { background: #dbeafe; color: var(--primary); }
-        .btn-record { background: var(--primary); color: white; }
-        .btn-record.recording { background: var(--danger); animation: pulse 1s infinite; }
+        .btn-listen { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .btn-record { border-color: var(--neon-green); color: var(--neon-green); }
+        .btn-record.recording { background: var(--neon-red); color: white; border-color: white; animation: blink 0.5s infinite; }
 
-        .feedback { margin-top: 15px; font-size: 1rem; font-weight: bold; min-height: 1.2em; }
+        .feedback { margin-top: 15px; font-size: 0.9rem; font-weight: bold; min-height: 1.5em; text-transform: uppercase; }
         
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header><h1>VEN1101 IA Practice Tool</h1></header>
+    <header><h1>VEN1101 IA System v2.0</h1></header>
 
     <div class="tabs">
-        <button class="tab-btn active" id="btn-vocab" onclick="showSection('vocab')">Vocab List</button>
-        <button class="tab-btn" id="btn-exp" onclick="showSection('exp')">Expressions</button>
-        <button class="tab-btn" id="btn-challenge" onclick="showSection('challenge')">Challenge Yourself</button>
+        <button class="tab-btn active" id="btn-vocab" onclick="showSection('vocab')">Inventory</button>
+        <button class="tab-btn" id="btn-exp" onclick="showSection('exp')">Skills</button>
+        <button class="tab-btn" id="btn-challenge" onclick="showSection('challenge')">Challenge Yourself! 💪</button>
     </div>
 
     <div id="vocab-section">
-        <div class="category-hd">Month</div><div id="list-month" class="item-list"></div>
+        <div class="category-hd">Calendar / Month</div><div id="list-month" class="item-list"></div>
         <div class="category-hd">Duty / Training</div><div id="list-duty" class="item-list"></div>
-        <div class="category-hd">Action Verb</div><div id="list-verb" class="item-list"></div>
-        <div class="category-hd">Noun</div><div id="list-noun" class="item-list"></div>
+        <div class="category-hd">Action Commands</div><div id="list-verb" class="item-list"></div>
+        <div class="category-hd">Items / Noun</div><div id="list-noun" class="item-list"></div>
     </div>
 
     <div id="exp-section" class="hidden">
         <div class="category-hd">1) Greeting</div><div id="exp-1" class="item-list"></div>
-        <div class="category-hd">2) Asking for information</div><div id="exp-2" class="item-list"></div>
-        <div class="category-hd">3) Making requests</div><div id="exp-3" class="item-list"></div>
-        <div class="category-hd">4) Responding to requests</div><div id="exp-4" class="item-list"></div>
+        <div class="category-hd">2) Asking Information</div><div id="exp-2" class="item-list"></div>
+        <div class="category-hd">3) Making Requests</div><div id="exp-3" class="item-list"></div>
+        <div class="category-hd">4) Responding</div><div id="exp-4" class="item-list"></div>
         <div class="category-hd">5) Closing</div><div id="exp-5" class="item-list"></div>
-        <div class="category-hd">6) Asking for clarification</div><div id="exp-6" class="item-list"></div>
+        <div class="category-hd">6) Clarification</div><div id="exp-6" class="item-list"></div>
     </div>
 
     <div id="challenge-section" class="hidden">
         <div class="challenge-container">
-            <button class="challenge-btn" onclick="getRandomChallenge()">🎯 Random Challenge</button>
-            <p style="color: #64748b;">練習詢問資訊、提出請求及回應請求的組合句子。</p>
+            <button class="challenge-btn" onclick="getRandomChallenge()">START RANDOM QUEST</button>
+            <p style="color: var(--neon-gold); font-size: 0.8rem; letter-spacing: 1px; margin-top: 15px;">COMBINE VOCAB & SKILLS TO LEVEL UP!</p>
         </div>
     </div>
 </div>
 
 <div id="practice-panel" class="practice-panel">
     <div class="panel-content">
-        <div id="target-display" class="target-display">Text</div>
+        <div id="target-display" class="target-display">MISSION TARGET</div>
         <div id="target-translation" class="target-translation">Translation</div>
         <div id="feedback-text" class="feedback"></div>
         <div class="btn-group">
-            <button class="action-btn btn-listen" onclick="speakText()">🔊 Listen</button>
-            <button id="record-btn" class="action-btn btn-record" onclick="startRecognition()">🎤 Record</button>
-            <button class="action-btn" style="background:#eee" onclick="closePanel()">✕</button>
+            <button class="action-btn btn-listen" onclick="speakText()">🔊 AUDIO</button>
+            <button id="record-btn" class="action-btn btn-record" onclick="startRecognition()">🎤 VOICE INPUT</button>
+            <button class="action-btn" onclick="closePanel()">✕ EXIT</button>
         </div>
     </div>
 </div>
@@ -160,63 +195,58 @@
         6: [{en: "Sorry. I missed that. Could you repeat that, please?", zh: "抱歉。我聽不清楚。可以請你重複一遍嗎？"}, {en: "May I beg your pardon?", zh: "請再說一遍好嗎？"}, {en: "Sorry. Can you say it again, please?", zh: "抱歉。可以請你再說一次嗎？"}]
     };
 
-    // 精選 50 句挑戰句子 (僅包含 Asking info, Making requests, Responding to requests)
+    // 完整的 50 句挑戰
     const challenges = [
-        // Asking for Information
         {en: "Can you tell me the date of the dinner meeting?", zh: "你能告訴我晚餐會議的日期嗎？"},
         {en: "May I know the location of the music show?", zh: "我可以知道音樂表演的地點嗎？"},
-        {en: "Can you tell me the time of the IT course?", zh: "你能告訴我資訊科技課程的時間嗎？"},
-        {en: "May I know the location of the food expo?", zh: "我可以知道食品博覽會的地點嗎？"},
-        {en: "Can you tell me the date of the fashion show?", zh: "你能告訴我時裝表演的日期嗎？"},
-        {en: "May I know the location of the booth?", zh: "我可以知道攤位的位置嗎？"},
-        {en: "Can you tell me the date of the yoga workshop?", zh: "你能告訴我瑜伽工作坊的日期嗎？"},
-        {en: "May I know the location of the café?", zh: "我可以知道咖啡店的地點嗎？"},
-        {en: "Can you tell me the time of the staff meeting?", zh: "你能告訴我員工會議的時間嗎？"},
-        {en: "May I know the location of the trade talk?", zh: "我可以知道貿易講座的地點嗎？"},
-        {en: "Can you tell me the date of the food test in March?", zh: "你能告訴我三月份食品檢測的日期嗎？"},
-        {en: "May I know the location of the safety workshop?", zh: "我可以知道安全工作坊的地點嗎？"},
-        {en: "Can you tell me the time of the sales training?", zh: "你能告訴我銷售培訓的時間嗎？"},
-        {en: "May I know the location of the English speaking course?", zh: "我可以知道英語會話課程的地點嗎？"},
-        {en: "Can you tell me the date of the new products training?", zh: "你能告訴我新產品培訓的日期嗎？"},
-        {en: "May I know the location of the new services training in May?", zh: "我可以知道五月份新服務培訓的地點嗎？"},
-        
-        // Making Requests
         {en: "Could you please check the floor plan?", zh: "能否請你檢查一下平面圖？"},
-        {en: "Can you please send the checklist tomorrow?", zh: "可以請你明天發送檢查清單嗎？"},
-        {en: "Would you please bring the samples to the booth?", zh: "你願意把樣本帶到攤位嗎？"},
-        {en: "Could you please confirm the schedule in January?", zh: "能否請你確認一下一月份的日程？"},
-        {en: "Can you please book the room for the meeting?", zh: "可以請你為會議預訂房間嗎？"},
-        {en: "Would you please print the handout for me?", zh: "你願意幫我列印講義嗎？"},
-        {en: "Could you please prepare the tools?", zh: "能否請你準備一下工具？"},
-        {en: "Can you please order the drinks for the people?", zh: "可以請你為大家訂購飲品嗎？"},
-        {en: "Would you please design the poster for the event?", zh: "你願意為活動設計海報嗎？"},
-        {en: "Could you please copy the list for the staff?", zh: "能否請你為員工影印這份清單？"},
-        {en: "Can you please download the rundown now?", zh: "可以請你現在下載流程表嗎？"},
-        {en: "Would you please set up the table in the room?", zh: "你願意在房間裡擺放桌子嗎？"},
-        {en: "Could you please write the email for the inquiry?", zh: "能否請你寫一封關於查詢的電郵？"},
-        {en: "Can you please meet the manager in February?", zh: "可以請你在二月份見經理嗎？"},
-        {en: "Would you please get the key for the equipment?", zh: "你願意去拿設備的鎖匙嗎？"},
-        {en: "Could you please tell me the location of the tools?", zh: "能否請你告訴我工具在哪裡？"},
-        {en: "Can you please check the menu for the café?", zh: "可以請你檢查一下咖啡店的選單嗎？"},
-        
-        // Responding to Requests
         {en: "Yes. Sure. I'll book the room for you.", zh: "好的，沒問題。我會為你預訂房間。"},
+        {en: "Can you tell me the time of the IT course?", zh: "你能告訴我資訊科技課程的時間嗎？"},
+        {en: "Would you please bring the samples to the booth?", zh: "你願意把樣本帶到攤位嗎？"},
         {en: "Of course. I will confirm the date in April.", zh: "當然。我會在四月份確認日期。"},
-        {en: "OK. I will print the floor plan now.", zh: "好。我現在就列印平面圖。"},
-        {en: "Yes. Sure. I'll send the email tomorrow.", zh: "好的，沒問題。我明天會發送電郵。"},
-        {en: "Of course. I will check the equipment for you.", zh: "當然。我會為你檢查設備。"},
-        {en: "OK. I will prepare the samples for the food expo.", zh: "好。我會為食品博覽會準備樣本。"},
-        {en: "Yes. Sure. I'll bring the handout to the room.", zh: "好的，沒問題。我會把講義帶到房間。"},
-        {en: "Of course. I will order the drinks for the meeting.", zh: "當然。我會為會議訂購飲品。"},
-        {en: "OK. I will write the report in June.", zh: "好。我會在六月份寫報告。"},
-        {en: "Yes. Sure. I'll get the key for you.", zh: "好的，沒問題。我會幫你去拿鎖匙。"},
-        {en: "Of course. I will set up the booth tomorrow.", zh: "當然。我明天會建立攤位。"},
-        {en: "OK. I will download the checklist for the training.", zh: "好。我會為培訓下載檢查清單。"},
-        {en: "Yes. Sure. I'll tell the people about the time.", zh: "好的，沒問題。我會告訴大家時間。"},
-        {en: "Of course. I will check the drinks in the café.", zh: "當然。我會檢查咖啡店的飲品。"},
-        {en: "OK. I will prepare the tools for the workshop.", zh: "好。我會為工作坊準備工具。"},
-        {en: "Yes. Sure. I'll design the poster for you.", zh: "好的，沒問題。我會為你設計海報。"},
-        {en: "Of course. I will book the IT course tonight.", zh: "當然。我今晚會預訂資訊科技課程。"}
+        {en: "May I know the location of the booth?", zh: "我可以知道攤位的位置嗎？"},
+        {en: "Could you please send the checklist tomorrow?", zh: "能否請你明天發送檢查清單？"},
+        {en: "OK. I will print the handout for the meeting.", zh: "好。我會為會議列印講義。"},
+        {en: "Can you tell me the date of the fashion show?", zh: "你能告訴我時裝表演的日期嗎？"},
+        {en: "Could you please prepare the tools?", zh: "能否請你準備一下工具？"},
+        {en: "Yes. Sure. I'll email the list tonight.", zh: "好的，沒問題。我今晚會發送電郵。"},
+        {en: "May I know the location of the food expo?", zh: "我可以知道食品博覽會的地點嗎？"},
+        {en: "Would you please set up the table in the café?", zh: "你願意在咖啡店擺放桌子嗎？"},
+        {en: "Of course. I will check the drinks for you.", zh: "當然。我會為你檢查飲品。"},
+        {en: "Can you tell me the time of the sales training?", zh: "你能告訴我銷售培訓的時間嗎？"},
+        {en: "Could you please write the inquiry email?", zh: "能否請你寫一封查詢電郵？"},
+        {en: "OK. I will get the key for the room.", zh: "好。我會去拿房間的鎖匙。"},
+        {en: "Can you please download the rundown now?", zh: "可以請你現在下載流程表嗎？"},
+        {en: "May I know the location of the yoga workshop?", zh: "我可以知道瑜伽工作坊的地點嗎？"},
+        {en: "Could you please tell me the location of the café?", zh: "能否請你告訴我咖啡店的位置？"},
+        {en: "Of course. I will design the poster for you.", zh: "當然。我會為你設計海報。"},
+        {en: "Can you tell me the date of the staff meeting in March?", zh: "你能告訴我三月份員工會議的日期嗎？"},
+        {en: "Would you please check the equipment for the training?", zh: "可以請你檢查一下培訓用的設備嗎？"},
+        {en: "Yes. Sure. I'll bring the tools tomorrow.", zh: "好的，沒問題。我明天會帶工具來。"},
+        {en: "May I know the location of the safety workshop?", zh: "我可以知道安全工作坊的地點嗎？"},
+        {en: "Could you please book the IT course in February?", zh: "能否請你在二月份預訂資訊科技課程？"},
+        {en: "OK. I will copy the floor plan for the team.", zh: "好。我會為團隊影印平面圖。"},
+        {en: "Can you tell me the date of the food test?", zh: "你能告訴我食品檢測的日期嗎？"},
+        {en: "Would you please print the menu for the booth?", zh: "可以請你為攤位列印選單嗎？"},
+        {en: "Of course. I will send the samples to the café.", zh: "當然。我會把樣本送到咖啡店。"},
+        {en: "May I know the location of the trade talk in January?", zh: "我可以知道一月份貿易講座的地點嗎？"},
+        {en: "Could you please order the drinks for the people?", zh: "能否請你為大家訂購飲品？"},
+        {en: "Yes. Sure. I'll meet you in June.", zh: "好的，沒問題。我會在六月份與你見面。"},
+        {en: "Can you tell me the time of the new products training?", zh: "你能告訴我新產品培訓的時間嗎？"},
+        {en: "Would you please download the list tonight?", zh: "可以請你今晚下載清單嗎？"},
+        {en: "OK. I will prepare the room for the training.", zh: "好。我會為培訓準備房間。"},
+        {en: "May I know the location of the fashion show in May?", zh: "我可以知道五月份時裝表演的地點嗎？"},
+        {en: "Could you please check the drinks for the food expo?", zh: "能否請你檢查一下食品博覽會的飲品？"},
+        {en: "Of course. I will write the email for the new services.", zh: "當然。我會寫關於新服務的電郵。"},
+        {en: "Can you tell me the date of the yoga workshop in April?", zh: "你能告訴我四月份瑜伽工作坊的日期嗎？"},
+        {en: "Would you please bring the key to the staff meeting?", zh: "可以請你把鎖匙帶到員工會議嗎？"},
+        {en: "Yes. Sure. I'll set up the equipment now.", zh: "好的，沒問題。我現在就架設設備。"},
+        {en: "May I know the location of the English speaking course?", zh: "我可以知道英語會話課程的地點嗎？"},
+        {en: "Could you please tell me the location of the room?", zh: "能否請你告訴我房間在哪裡？"},
+        {en: "OK. I will book the dinner meeting for you.", zh: "好。我會為你預訂晚餐會議。"},
+        {en: "Can you tell me the date of the trade talk?", zh: "你能告訴我貿易講座的日期嗎？"},
+        {en: "Would you please confirm the list tomorrow?", zh: "可以請你明天確認清單嗎？"},
+        {en: "Of course. I will prepare the handout for you.", zh: "當然。我會為你準備講義。"}
     ];
 
     let currentTarget = "";
@@ -234,7 +264,7 @@
             const container = document.getElementById(`exp-${i}`);
             expData[i].forEach(item => {
                 container.innerHTML += `<div class="item-row" onclick="openPractice('${item.en}', '${item.zh}')">
-                    <span class="eng-txt" style="font-size:1rem;">${item.en}</span><span class="chi-txt" style="font-size:0.85rem;">${item.zh}</span></div>`;
+                    <span class="eng-txt">${item.en}</span><span class="chi-txt">${item.zh}</span></div>`;
             });
         }
     }
@@ -261,40 +291,50 @@
         document.getElementById('target-display').innerText = en;
         document.getElementById('target-translation').innerText = zh;
         document.getElementById('practice-panel').style.display = 'block';
-        document.getElementById('feedback-text').innerText = "";
+        document.getElementById('feedback-text').innerText = "SYSTEM WAITING...";
+        document.getElementById('feedback-text').style.color = "white";
     }
 
-    function closePanel() { document.getElementById('practice-panel').style.display = 'none'; }
+    function closePanel() { 
+        if(recognition) recognition.stop();
+        document.getElementById('practice-panel').style.display = 'none'; 
+    }
 
     function speakText() {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(currentTarget);
         u.lang = 'en-US';
+        u.rate = 0.85;
         window.speechSynthesis.speak(u);
     }
 
     function startRecognition() {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!SR) return alert("您的瀏覽器不支援語音辨識");
+        if(!SR) return alert("SPEECH SYSTEM ERROR");
         recognition = new SR();
         recognition.lang = 'en-US';
         
         const btn = document.getElementById('record-btn');
         const feedback = document.getElementById('feedback-text');
         
-        recognition.onstart = () => { btn.classList.add('recording'); feedback.innerText = "正在聆聽..."; };
+        recognition.onstart = () => { btn.classList.add('recording'); feedback.innerText = "LISTENING..."; };
+        
         recognition.onresult = (e) => {
+            recognition.stop(); 
             const result = e.results[0][0].transcript.toLowerCase().trim().replace(/[.?]/g,"");
             const target = currentTarget.toLowerCase().trim().replace(/[.?]/g,"");
+            
             if(result === target) {
-                feedback.style.color = "var(--success)";
-                feedback.innerText = "Excellent! 發音正確。";
+                feedback.style.color = "#22c55e";
+                feedback.innerText = "SUCCESS! LEVEL UP.";
             } else {
-                feedback.style.color = "var(--danger)";
-                feedback.innerHTML = `您說的是: "<i style="color:#333">${e.results[0][0].transcript}</i>"`;
+                feedback.style.color = "#ef4444";
+                feedback.innerHTML = `FAILED. YOU SAID: <br><span style="color:white; font-size:0.75rem;">"${e.results[0][0].transcript}"</span>`;
             }
         };
+
         recognition.onend = () => { btn.classList.remove('recording'); };
+        recognition.onerror = () => { recognition.stop(); btn.classList.remove('recording'); };
         recognition.start();
     }
 
